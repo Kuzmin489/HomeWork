@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class CRUDOperationDAOImpl<E, K extends Serializable> implements CRUDOperationDAO<E, K> {
 
@@ -24,24 +25,14 @@ public abstract class CRUDOperationDAOImpl<E, K extends Serializable> implements
         return sessionFactory.getCurrentSession();
     }
 
-
     @Override
     public void create(E entity) {
         getCurrentSession().saveOrUpdate(entity);
     }
 
     @Override
-    public E getById(K key) {
-        return (E) getCurrentSession().get(daoType, key);
-    }
-
-    @Override
-    public E getRequired(K key) {
-        E entity = (E) getCurrentSession().get(daoType, key);
-        if(entity == null) {
-            throw new IllegalArgumentException("Entity with id = " + key + " not exist!");
-        }
-        return entity;
+    public Optional<E> getById(K key) {
+        return Optional.ofNullable((E) getCurrentSession().get(daoType, key));
     }
 
     @Override
@@ -55,7 +46,7 @@ public abstract class CRUDOperationDAOImpl<E, K extends Serializable> implements
     }
 
     @Override
-    public List<E> getAll() {
-        return getCurrentSession().createCriteria(daoType).list();
+    public Optional<List<E>> getAll() {
+        return Optional.ofNullable(getCurrentSession().createCriteria(daoType).list());
     }
 }

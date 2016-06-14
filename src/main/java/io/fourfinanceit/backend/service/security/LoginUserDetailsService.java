@@ -9,8 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +20,11 @@ public class LoginUserDetailsService implements UserDetailsService {
     @Autowired
     private ClientDAO clientDAO;
 
-    @Transactional(readOnly=true)
+    @Transactional()
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Client client = clientDAO.findByUserName(username);
-        if(client == null) {
-            throw new UsernameNotFoundException("User Not Found");
-        }
+        Client client = clientDAO.findByUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         if(client.getAdmin()) {

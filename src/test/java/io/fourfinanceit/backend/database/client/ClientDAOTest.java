@@ -5,9 +5,10 @@ import io.fourfinanceit.backend.domain.Client;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -16,18 +17,11 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.*;
 
 @Transactional
+@Rollback
 public class ClientDAOTest extends DatabaseHibernateTest {
 
     @Autowired
     private ClientDAO clientDAO;
-
-    @Test
-    public void testCreateWithoutLoans() throws Exception {
-        Client client = createDefaultClients(1).get(0);
-        clientDAO.create(client);
-
-        assertThat(client.getId(), is(notNullValue()));
-    }
 
     @Test
     public void testCreateUser() throws Exception {
@@ -38,16 +32,25 @@ public class ClientDAOTest extends DatabaseHibernateTest {
     }
 
     @Test
+    public void testUpdateUser() throws Exception {
+        Client client = createDefaultClients(1).get(0);
+        clientDAO.create(client);
+
+        clientDAO.update(client.setFirstName("Renamed"));
+
+        Client clientFromDb = clientDAO.getById(client.getId()).orElseThrow(Exception::new);
+        assertThat(clientFromDb.getFirstName(), is("Renamed"));
+
+    }
+
+    @Test
     public void testRemoveUser() throws Exception {
         List<Client> clients  = createDefaultClients(3);
         clients.forEach(e -> clientDAO.create(e));
         clientDAO.delete(clients.get(0));
 
-        Boolean clientExist = clientDAO.getAll()
-                .stream()
-                .filter( e -> e.getId().equals(clients.get(0).getId()))
-                .findAny().isPresent();
-        assertThat(clientExist, is(false));
+        Optional<Client> deletedClient = clientDAO.getById(clients.get(0).getId());
+        assertThat(deletedClient.isPresent(), is(false));
 
     }
 
@@ -56,7 +59,7 @@ public class ClientDAOTest extends DatabaseHibernateTest {
         List<Client> clients  = createDefaultClients(2);
         clients.forEach(e -> clientDAO.create(e));
 
-        Client client = clientDAO.findByUserName(clients.get(0).getLogin());
+        Client client = clientDAO.findByUserName(clients.get(0).getLogin()).orElseThrow(Exception::new);
         assertThat(client, is(notNullValue()));
         assertThat(client.getId(), is(notNullValue()));
 
@@ -65,7 +68,7 @@ public class ClientDAOTest extends DatabaseHibernateTest {
     private List<Client> createDefaultClients(Integer amount) {
         return IntStream.rangeClosed(1, amount)
                 .mapToObj( i -> new Client()
-                .setLogin("login" + i)
+                .setLogin("test" + i)
                 .setPassword("password" + i)
                 .setFirstName("Name" + i)
                 .setLastName("LastName" + i)

@@ -1,20 +1,28 @@
 package io.fourfinanceit.backend.dto;
 
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class LoanDTO {
     private Long id;
     private BigDecimal amount;
-    private Integer term;
+    private LocalDate endTerm;
 
     public LoanDTO() {
     }
 
-    public LoanDTO(Long id, BigDecimal amount, Integer term) {
+    public LoanDTO(BigDecimal amount, LocalDate endTerm) {
+        this.amount = amount;
+        this.endTerm = endTerm;
+    }
+
+    public LoanDTO(Long id, BigDecimal amount, LocalDate endTerm) {
         this.id = id;
         this.amount = amount;
-        this.term = term;
+        this.endTerm = endTerm;
     }
 
     public Long getId() {
@@ -31,16 +39,16 @@ public class LoanDTO {
         return this;
     }
 
-    public LoanDTO setTerm(Integer term) {
-        this.term = term;
-        return this;
-    }
-
     public BigDecimal getAmount() {
         return amount;
     }
 
-    public Integer getTerm() {
-        return term;
+    public LocalDate getEndTerm() {
+        return endTerm;
+    }
+
+    public LoanDTO setEndTerm(LocalDate endTerm) {
+        this.endTerm = endTerm;
+        return this;
     }
 }

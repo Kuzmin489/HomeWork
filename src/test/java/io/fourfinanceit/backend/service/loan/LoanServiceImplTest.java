@@ -3,6 +3,7 @@ package io.fourfinanceit.backend.service.loan;
 import io.fourfinanceit.backend.database.loan.LoanDAO;
 import io.fourfinanceit.backend.domain.Loan;
 import io.fourfinanceit.backend.dto.LoanCreateDTO;
+import io.fourfinanceit.backend.dto.LoanFullDTO;
 import io.fourfinanceit.backend.exception.AnalyzerException;
 import io.fourfinanceit.backend.exception.LoanError;
 import io.fourfinanceit.backend.exception.LoanException;
@@ -16,8 +17,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -26,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class CreateLoanServiceImplTest {
+public class LoanServiceImplTest {
 
     @Mock
     private LoanValidator loanValidator;
@@ -109,8 +112,12 @@ public class CreateLoanServiceImplTest {
 
     @Test
     public void shouldReturnLoanFullDTO() throws Exception {
+        Loan loan = new Loan().setId(1L).setAmount(new BigDecimal(200));
+        when(loanDAO.getById(loan.getId())).thenReturn(Optional.of(loan));
+        when(loanConverter.convertFullLoan(loan)).thenReturn(new LoanFullDTO());
+        LoanFullDTO loanFullInfo = loanService.getLoanInfo(1L);
 
-
+        assertNotNull(loanFullInfo);
     }
 
     private LoanCreateDTO getDefaultLoan() {

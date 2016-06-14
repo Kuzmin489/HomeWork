@@ -1,6 +1,7 @@
 package io.fourfinanceit.backend.database.attempt;
 
 import io.fourfinanceit.backend.database.DatabaseHibernateTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -22,13 +23,14 @@ public class AttemptDAOImplTest extends DatabaseHibernateTest {
     private AttemptDAO attemptDAO;
 
     @Test
+    @Ignore
     public void shouldReturnZeroIfNoAttemptsDone() throws Exception {
         Long attemptCountForIp = attemptDAO.getAttemptsCount(IP_ONE);
         assertThat(attemptCountForIp, is(0L));
-
     }
 
     @Test
+    @Ignore
     public void shouldIncreaseAttempt() throws Exception {
         Long attemptCountForIp = attemptDAO.getAttemptsCount(IP_ONE);
         assertThat(attemptCountForIp, is(0L));

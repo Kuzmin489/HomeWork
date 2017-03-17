@@ -52,6 +52,8 @@ public class LoanServiceImplTest {
 
     @Test
     public void shouldValidateLoanBeforeCreate() throws Exception {
+        
+        int a = 5;
         LoanCreateDTO loanDTO = getDefaultLoan();
         loanService.createLoan(loanDTO,USER_ID);
 

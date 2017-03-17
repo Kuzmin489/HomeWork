@@ -37,6 +37,10 @@ public class LoanRestController {
         } catch (LoanException e) {
             throw new ResourceNotFoundException();
         }
+        
+        
+        
+        int a = 5;
     }
 
     //Json Example: {"termOfDays":20,"amount":30}

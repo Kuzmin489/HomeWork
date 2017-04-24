@@ -13,6 +13,7 @@ public class HwApplicationTests {
 
 	@Test
 	public void contextLoads() {
+		int a = 6;
 	}
 
 }
